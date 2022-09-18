@@ -40,11 +40,39 @@ class RuneState:
         os.remove(filepath)
         self.refresh_my_runes()
 
-    def rename_my_runes(self):
+    def rename_my_rune(self):
+        if len(self.my_rune_listbox.curselection()) <= 0:
+            utils.error("请选择要重命名的天赋!")
+            return
+
         index = self.my_rune_listbox.index(self.my_rune_listbox.curselection())
-        filepath = './runes/' + self.my_runes[index]
-        os.remove(filepath)
-        self.refresh_my_runes()
+
+        input_box = Tk()
+        input_box.title("重命名")
+        center_window(input_box, 230, 100)
+        label = Label(input_box, text="请输入天赋名称：")
+        label.pack()
+
+        rune_text = StringVar()
+        rune_entry = Entry(input_box, textvariable=rune_text)
+        rune_entry.pack()
+
+        def rename_rune():
+            rune_name = rune_entry.get()
+            if rune_name is None or rune_name.strip() == "":
+                utils.error("天赋名称不能为空")
+                # 防止弹出提示框后，input_box变到最底层
+                input_box.lift()
+                return
+
+            old_filepath = './runes/' + self.my_runes[index]
+            new_filepath = './runes/' + rune_name + ".rune"
+            os.rename(old_filepath, new_filepath)
+            self.refresh_my_runes()
+            input_box.destroy()
+
+        Button(input_box, text="确认", command=rename_rune).pack()
+        input_box.mainloop()
 
     def get_game_runes(self):
         return [rune['name'] for rune in self.game_runes]
@@ -57,7 +85,6 @@ class RuneState:
                 runes.append(item)
 
         return runes
-
 
     def get_my_runes(self):
         return [item[:-5] for item in self.my_runes]
@@ -87,11 +114,13 @@ class RuneState:
         self.refresh_game_runes()
 
 
-
-def addMyMsg():
-    global root
-    new_label = Label(root, text="Hi, Ling Liu!", background='green')
-    new_label.pack(side=TOP)
+def center_window(root, w, h):
+    ws = root.winfo_screenwidth()
+    hs = root.winfo_screenheight()
+    # 计算 x, y 位置
+    x = (ws / 2) - (w / 2)
+    y = (hs / 2) - (h / 2)
+    root.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
 
 def launch():
@@ -99,7 +128,7 @@ def launch():
 
     root = Tk()  # 根节点
     root.title('LOL一键自定义符文')
-    root.geometry('550x450')
+    center_window(root, 550, 450)
     refresh_button = Button(root, text='刷新', command=rune_state.refresh)
     refresh_button.place(x=10, y=10, width=60, height=30)
 
@@ -117,7 +146,7 @@ def launch():
     store_button.place(x=200, y=70, width=60, height=30)
 
     my_rune_label = Label(root, text="我的收藏")
-    my_rune_label.place(x=276, y=50, width=60, height=20)
+    my_rune_label.place(x=280, y=50, width=60, height=20)
 
     my_rune_listbox_var = StringVar(value=rune_state.get_my_runes())
     my_rune_listbox = Listbox(master=root, listvariable=my_rune_listbox_var)
@@ -129,8 +158,11 @@ def launch():
     load_button = Button(root, text='一键载入', command=rune_state.load_rune)
     load_button.place(x=480, y=70, width=60, height=30)
 
-    load_button = Button(root, text='删除', command=rune_state.delete_my_rune)
-    load_button.place(x=480, y=110, width=60, height=30)
+    delete_button = Button(root, text='删除', command=rune_state.delete_my_rune)
+    delete_button.place(x=480, y=110, width=60, height=30)
+
+    rename_button = Button(root, text='重命名', command=rune_state.rename_my_rune)
+    rename_button.place(x=480, y=150, width=60, height=30)
 
     root.mainloop()
 

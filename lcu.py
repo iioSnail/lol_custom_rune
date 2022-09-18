@@ -62,7 +62,11 @@ class LCU:
 
         url = self.url + "/lol-perks/v1/pages"
 
-        resp = requests.post(url, json=json.loads(rune), headers=self.headers, verify=False)
+        rune_json = json.loads(rune)
+
+        rune_json['name'] = rune_filename[:-5]
+
+        resp = requests.post(url, json=rune_json, headers=self.headers, verify=False)
         if not resp.ok:
             utils.error("载入符文页失败！")
             return
