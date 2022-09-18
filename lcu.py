@@ -15,6 +15,8 @@ class LCU:
         self.headers = self._build_headers()
         self.url = f"https://127.0.0.1:{port}"
 
+        os.mkdir("./runes") if not os.path.exists("runes") else ""
+
     def _build_headers(self):
         headers = {
             "Accept": "application/json",
