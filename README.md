@@ -22,3 +22,7 @@ WeGame等Lol辅助工具无法收藏自定义天赋，只能使用推荐的天�
 ```shell
 pyinstaller -F -w -i images/icon.png gui.py --uac-admin
 ```
+
+# exe下载地址
+
+最新版：[百度网盘](https://pan.baidu.com/s/1pcg6SVJm7aF-lm9yGeW6ng?pwd=xogf)
